@@ -1,21 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Fraunces } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/providers/theme-provider";
-import { HeroHeader } from "@/components/layout/header";
-import FooterSection from "@/components/layout/footer";
-import { SimpleToggle } from "@/components/ui/mode-toggle";
-import { Toaster } from "@/components/ui/sonner";
-import ErrorBoundary from "@/components/ErrorBoundary";
+import Link from "next/link";
 
 const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
   subsets: ["latin"],
   display: "swap",
 });
@@ -29,38 +17,17 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Morális - Automation with a conscience",
-  description: "We help founders and teams make principled decisions that scale. Morális blends investment readiness, brand positioning, and AI-powered automation—without compromising ethics.",
-  metadataBase: new URL('https://moralis.studio'),
+  title: "Debunking The Myths: Clear Facts About OCD",
+  description: "An educational site debunking common OCD myths with clear facts, treatment options (CBT/ERP, SSRIs), and vetted sources. Not medical advice.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://ocd-debunked.vercel.app'),
   openGraph: {
-    title: "Morális - Automation with a conscience",
-    description: "We help founders and teams make principled decisions that scale. Morális blends investment readiness, brand positioning, and AI-powered automation—without compromising ethics.",
-    url: 'https://moralis.studio',
-    siteName: 'Morális',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'Morális landing page showing "Automation with a conscience" with deep green accents',
-        type: 'image/png',
-      },
-    ],
+    title: "Debunking The Myths: Clear Facts About OCD",
+    description: "Clear facts about OCD, myth-busting, treatment options, and resources.",
+    type: "website",
     locale: 'en_US',
-    type: 'website',
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Morális - Automation with a conscience',
-    description: 'We help founders and teams make principled decisions that scale. Morális blends investment readiness, brand positioning, and AI-powered automation—without compromising ethics.',
-    images: [
-      {
-        url: '/og-image.png',
-        alt: 'Morális landing page showing "Automation with a conscience" with deep green accents',
-      }
-    ],
-    creator: '@moralisstudio',
-    site: '@moralisstudio',
+  alternates: { 
+    canonical: process.env.NEXT_PUBLIC_SITE_URL || undefined 
   },
   robots: {
     index: true,
@@ -78,25 +45,6 @@ export const metadata: Metadata = {
     shortcut: '/favicon-16x16.png',
     apple: '/apple-touch-icon.png',
   },
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'default',
-    title: 'Morális',
-  },
-  formatDetection: {
-    telephone: false,
-    address: false,
-    email: false,
-  },
-  other: {
-    'mobile-web-app-capable': 'yes',
-    'apple-mobile-web-app-capable': 'yes',
-    'apple-mobile-web-app-status-bar-style': 'default',
-    'theme-color': '#FAFAF9',
-    'msapplication-TileColor': '#FAFAF9',
-    'msapplication-navbutton-color': '#FAFAF9',
-    'apple-mobile-web-app-title': 'Morális',
-  },
 };
 
 export default function RootLayout({
@@ -106,42 +54,49 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              try {
-                if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                  document.documentElement.classList.add('dark')
-                } else {
-                  document.documentElement.classList.remove('dark')
-                }
-              } catch (_) {}
-            `,
-          }}
-        />
-      </head>
-      <body
-        className={`${inter.variable} ${fraunces.variable} min-h-screen bg-background font-sans antialiased`}
-      >
-        <ThemeProvider>
-          <ErrorBoundary>
-            <HeroHeader />
-          </ErrorBoundary>
-          <div className="min-h-screen flex flex-col">
-            <main className="flex-1 pt-[72px] sm:pt-16 lg:pt-14">{children}</main>
-            <ErrorBoundary>
-              <FooterSection />
-            </ErrorBoundary>
-          </div>
-          {/* Theme toggle positioned as floating button */}
-          <ErrorBoundary>
-            <div className="fixed bottom-6 right-6 z-50">
-              <SimpleToggle />
+      <body className={`${inter.className} bg-white text-slate-800 antialiased`}>
+        {/* Header with Navigation */}
+        <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
+          <nav className="mx-auto max-w-5xl flex items-center justify-between p-4">
+            <Link 
+              href="/" 
+              className="text-xl font-semibold text-slate-900 hover:text-teal-600 transition-colors"
+            >
+              OCD Debunked
+            </Link>
+            <div className="flex items-center gap-6">
+              <Link 
+                href="/treatment-options" 
+                className="text-slate-700 hover:text-teal-600 transition-colors font-medium"
+              >
+                Treatment Options
+              </Link>
+              <Link 
+                href="/sources" 
+                className="text-slate-700 hover:text-teal-600 transition-colors font-medium"
+              >
+                Sources
+              </Link>
             </div>
-          </ErrorBoundary>
-          <Toaster />
-        </ThemeProvider>
+          </nav>
+        </header>
+
+        {/* Main Content */}
+        <main className="min-h-screen">{children}</main>
+
+        {/* Footer with Disclaimers */}
+        <footer className="mt-16 border-t border-slate-200 bg-slate-50">
+          <div className="mx-auto max-w-5xl p-6 text-sm text-slate-600">
+            <p className="font-medium text-slate-800 mb-2">Educational content. Not medical advice.</p>
+            <p className="text-slate-500">
+              Image credits: Unsplash / Pixabay / FreeSVG (CC0 / Unsplash License).
+            </p>
+            <p className="mt-4 text-xs text-slate-400">
+              This site was created for educational purposes as part of a university project. 
+              If you or someone you know is struggling with OCD, please consult a licensed mental health professional.
+            </p>
+          </div>
+        </footer>
       </body>
     </html>
   );
